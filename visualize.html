@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+#licensing {
+  fill: green;
+}
+
+.link.licensing {
+  stroke: green;
+}
+
+.link.resolved {
+  stroke-dasharray: 0,2 1;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+}
+
+</style>
+<body>
+<script src="d3.js"></script>
+<script>
+
+// http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
+var links = [
+  {source: "function", target: "cross-validation", type:"suit"},
+{source: "function", target: "iterator", type:"suit"},
+{source: "coordinate", target: "descent", type:"suit"},
+{source: "coordinate", target: "implementations", type:"suit"},
+{source: "objects", target: "lassocv", type:"suit"},
+{source: "objects", target: "pipeline", type:"suit"},
+{source: "objects", target: "transformers", type:"suit"},
+{source: "reasons", target: "license", type:"suit"},
+{source: "scikit-learn", target: "inheritance", type:"suit"},
+{source: "scikit-learn", target: "conventions", type:"suit"},
+{source: "scikit-learn", target: "interface", type:"suit"},
+{source: "guidelines", target: "documentation", type:"suit"},
+{source: "implementations", target: "licenses", type:"suit"},
+{source: "weights", target: "samples", type:"suit"},
+{source: "cross-validation", target: "computation", type:"suit"},
+{source: "focuses", target: "language", type:"suit"},
+{source: "licensing", target: "ecosystem", type:"suit"},
+{source: "licensing", target: "licenses", type:"suit"},
+{source: "distributions", target: "macports", type:"suit"},
+{source: "machine", target: "algorithms", type:"suit"},
+{source: "machine", target: "interface", type:"suit"},
+{source: "functions", target: "bindings", type:"suit"},
+{source: "functions", target: "packages", type:"suit"},
+{source: "parameters", target: "parameter", type:"suit"},
+{source: "factors", target: "bindings", type:"suit"},
+{source: "capabilities", target: "processors", type:"suit"},
+{source: "capabilities", target: "version", type:"suit"},
+{source: "capabilities", target: "features", type:"suit"},
+{source: "libraries", target: "boilerplate", type:"suit"},
+{source: "libraries", target: "extensions", type:"suit"},
+{source: "harnesses", target: "environment", type:"suit"},
+{source: "harnesses", target: "implementations", type:"suit"},
+{source: "fitting", target: "estimator", type:"suit"},
+{source: "fitting", target: "gridsearchcv", type:"suit"},
+{source: "fitting", target: "parameters", type:"suit"},
+{source: "estimator", target: "estimator", type:"suit"},
+{source: "estimator", target: "example", type:"suit"},
+{source: "estimator", target: "dimension", type:"suit"},
+{source: "estimator", target: "reduction", type:"suit"},
+{source: "adoption", target: "projects", type:"suit"},
+{source: "adoption", target: "restrictions", type:"suit"},
+{source: "samples", target: "dimensions", type:"suit"},
+{source: "samples", target: "implementation", type:"suit"},
+{source: "performance", target: "fortran", type:"suit"},
+{source: "performance", target: "version", type:"suit"},
+{source: "evaluation", target: "goodness", type:"suit"},
+{source: "evaluation", target: "loglikelihood", type:"suit"},
+{source: "development", target: "development", type:"suit"},
+{source: "biology", target: "physics", type:"suit"},
+{source: "biology", target: "differs", type:"suit"},
+{source: "biology", target: "machine", type:"suit"},
+{source: "biology", target: "toolboxes", type:"suit"},
+{source: "languages", target: "operations", type:"suit"},
+{source: "real-world", target: "applications", type:"suit"},
+{source: "real-world", target: "machine-learning", type:"suit"},
+{source: "problems", target: "estimators", type:"suit"},
+{source: "precision", target: "regards", type:"suit"},
+{source: "precision", target: "employed", type:"suit"},
+{source: "framework", target: "package", type:"suit"},
+{source: "applications", target: "analysis", type:"suit"},
+{source: "applications", target: "algorithms", type:"suit"},
+{source: "dependencies", target: "programming", type:"suit"},
+{source: "dependencies", target: "pybrain", type:"suit"},
+{source: "bare-bone", target: "barrier", type:"suit"},
+{source: "interface", target: "comparison", type:"suit"},
+{source: "interface", target: "methods", type:"suit"},
+{source: "packages", target: "background", type:"suit"},
+{source: "packages", target: "performance", type:"suit"},
+{source: "packages", target: "scikitlearn", type:"suit"},
+{source: "classifiers", target: "predict", type:"suit"},
+{source: "classifiers", target: "estimators", type:"suit"},
+{source: "classifiers", target: "transformers", type:"suit"},
+{source: "structure", target: "parameters", type:"suit"},
+{source: "installation", target: "portability", type:"suit"},
+{source: "installation", target: "libraries", type:"suit"},
+{source: "installation", target: "platforms", type:"suit"},
+{source: "language", target: "building", type:"suit"},
+{source: "language", target: "approaches", type:"suit"},
+{source: "license", target: "software", type:"suit"},
+{source: "settings", target: "industry", type:"suit"},
+{source: "efficiency", target: "footprint", type:"suit"},
+{source: "efficiency", target: "alignment", type:"suit"},
+{source: "variety", target: "machine", type:"suit"},
+{source: "variety", target: "algorithms", type:"suit"},
+{source: "programming", target: "languages", type:"suit"},
+{source: "programming", target: "ecosystem", type:"suit"},
+{source: "non-specialists", target: "software", type:"suit"},
+{source: "non-specialists", target: "industries", type:"suit"},
+{source: "non-specialists", target: "computer-science", type:"suit"},
+{source: "algorithms", target: "machine", type:"suit"},
+{source: "algorithms", target: "toolkits", type:"suit"},
+{source: "residuals", target: "performance", type:"suit"},
+{source: "indices", target: "example", type:"suit"},
+{source: "validation", target: "estimators", type:"suit"},
+{source: "validation", target: "properties", type:"suit"},
+{source: "application", target: "ecosystem", type:"suit"},
+{source: "example", target: "transform", type:"suit"},
+{source: "example", target: "estimators", type:"suit"},
+{source: "example", target: "pybrain", type:"suit"}
+];
+
+var nodes = {};
+
+// Compute the distinct nodes from the links.
+links.forEach(function(link) {
+  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+  link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+});
+
+var width = 1260,
+    height = 600;
+
+var force = d3.layout.force()
+    .nodes(d3.values(nodes))
+    .links(links)
+    .size([width, height])
+    .linkDistance(60)
+    .charge(-300)
+    .on("tick", tick)
+    .start();
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+// Per-type markers, as they don't inherit styles.
+svg.append("defs").selectAll("marker")
+    .data(["suit", "licensing", "resolved"])
+  .enter().append("marker")
+    .attr("id", function(d) { return d; })
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 15)
+    .attr("refY", -1.5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+  .append("path")
+    .attr("d", "M0,-5L10,0L0,5");
+
+var path = svg.append("g").selectAll("path")
+    .data(force.links())
+  .enter().append("path")
+    .attr("class", function(d) { return "link " + d.type; })
+    .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+
+var circle = svg.append("g").selectAll("circle")
+    .data(force.nodes())
+  .enter().append("circle")
+    .attr("r", 6)
+    .call(force.drag);
+
+var text = svg.append("g").selectAll("text")
+    .data(force.nodes())
+  .enter().append("text")
+    .attr("x", 8)
+    .attr("y", ".31em")
+    .text(function(d) { return d.name; });
+
+// Use elliptical arc path segments to doubly-encode directionality.
+function tick() {
+  path.attr("d", linkArc);
+  circle.attr("transform", transform);
+  text.attr("transform", transform);
+}
+
+function linkArc(d) {
+  var dx = d.target.x - d.source.x,
+      dy = d.target.y - d.source.y,
+      dr = Math.sqrt(dx * dx + dy * dy);
+  return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+}
+
+function transform(d) {
+  return "translate(" + d.x + "," + d.y + ")";
+}
+
+</script>
